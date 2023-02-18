@@ -1,6 +1,7 @@
 function addClass(el, className) {
   if (el) {
     const classes = Array.isArray(className) ? className : [className];
+    console.log("classes", classes);
     classes.forEach((cl) => {
       el.classList.add(cl);
     });
@@ -8,7 +9,13 @@ function addClass(el, className) {
 }
 
 function removeClass(el, className) {
-  if (el) el.classList.remove(className);
+  if (el) {
+    const classes = Array.isArray(className) ? className : [className];
+    console.log("classes", classes);
+    classes.forEach((cl) => {
+      el.classList.remove(cl);
+    });
+  }
 }
 
 function addStyle(el, k, v) {
@@ -27,5 +34,21 @@ function setBoundingBox(sourceEl, targetEl) {
     targetEl.style.left = offsets.left + window.scrollX + "px";
     targetEl.style.width = `${offsets.width}px`;
     targetEl.style.height = `${offsets.height}px`;
+  }
+}
+
+function animate(elem, source, destination, duration) {
+  let pos = 0;
+  clearInterval(elem.animId);
+  // elem.style.marginLeft = source + 'px';
+  elem.animId = setInterval(frame, duration / 100);
+  const step = (destination - source) / 100;
+  function frame() {
+    if (pos >= 100) {
+      clearInterval(elem.animId);
+    } else {
+      pos++;
+      elem.style.marginLeft = source + pos * step + "px";
+    }
   }
 }

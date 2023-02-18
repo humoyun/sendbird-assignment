@@ -11,7 +11,7 @@ const POPUP_LIST_ITEM_CLASS = "popup-list__item";
 class DynamicList {
   constructor(container, items = [], options = {}) {
     this.activeElement = null;
-    this.magicElement = null;
+    this.popupElement = null;
     this.container = container;
 
     if (container) {
@@ -23,10 +23,10 @@ class DynamicList {
         popupList.appendChild(elem);
       });
 
-      this.magicElement = document.createElement("div");
-      addClass(this.magicElement, "popup-list__magic-item");
+      this.popupElement = document.createElement("div");
+      addClass(this.popupElement, "popup-list__popup-item");
 
-      container.appendChild(this.magicElement);
+      container.appendChild(this.popupElement);
 
       /**
        * tbd
@@ -145,8 +145,8 @@ class DynamicList {
     item.addEventListener("mouseenter", this._mouseenterHandler);
     item.addEventListener("mouseleave", this._mouseleaveHandler);
     item.addEventListener("click", (e) => {
-      addClass(this.magicElement, ["display-show", "popup-item__modal"]);
-      this.magicElement.innerHTML = e.target.innerHTML;
+      addClass(this.popupElement, ["display-show", "popup-item__modal"]);
+      this.popupElement.innerHTML = e.target.innerHTML;
 
       e.target.removeEventListener("mouseenter", this._mouseenterHandler);
 
@@ -168,9 +168,8 @@ class DynamicList {
     backdrop.addEventListener("click", (e) => {
       document.body.removeChild(backdrop);
       if (this.activeElement) {
-        addClass(this.magicElement, "display-none");
-        removeClass(this.magicElement, "display-show");
-        removeClass(this.magicElement, "popup-item__modal");
+        addClass(this.popupElement, "display-none");
+        removeClass(this.popupElement, ["display-show", "popup-item__modal"]);
       }
     });
 
