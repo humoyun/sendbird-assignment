@@ -58,6 +58,18 @@ body {
   border: 1px solid #8e8e8e;
   background-color: #f8f9fa;
   border-radius: 2px;
+  transition: transform 100ms ease;
+}
+
+.popup-list__item-modal {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 50%;
+  z-index: 101;
+  background-color: aliceblue;
 }
 
 .popup-list__backdrop {
@@ -77,20 +89,6 @@ ul {
   -webkit-margin-start: 0px;
   -webkit-margin-end: 0px;
   -webkit-padding-start: 0px;
-}
-
-.popup-item__modal {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-  height: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 101;
-  background-color: aliceblue;
 }
 
 .display-show {

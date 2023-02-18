@@ -1,7 +1,6 @@
 function addClass(el, className) {
   if (el) {
     const classes = Array.isArray(className) ? className : [className];
-    console.log("classes", classes);
     classes.forEach((cl) => {
       el.classList.add(cl);
     });
@@ -11,7 +10,6 @@ function addClass(el, className) {
 function removeClass(el, className) {
   if (el) {
     const classes = Array.isArray(className) ? className : [className];
-    console.log("classes", classes);
     classes.forEach((cl) => {
       el.classList.remove(cl);
     });
@@ -50,5 +48,13 @@ function animate(elem, source, destination, duration) {
       pos++;
       elem.style.marginLeft = source + pos * step + "px";
     }
+  }
+}
+
+function createElement(tag) {
+  if (tag) {
+    return document.createElement(tag);
+  } else {
+    throw new Error("tag name should be provided");
   }
 }

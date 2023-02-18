@@ -1,13 +1,11 @@
-const colors = ["#44bb4d", "#F25F5C", "#FFE066", "#247BA0", "#70C1B3"];
+const COLORS = ["#44bb4d", "#F25F5C", "#FFE066", "#247BA0", "#70C1B3"];
 
 class DynamicList {
   constructor(container, items = []) {
     this.container = container;
-    this.popupElement = null;
-    this.popupElement = null;
 
-    const wrapper = document.createElement("div");
-    const popupList = document.createElement("ul");
+    const wrapper = createElement("div");
+    const popupList = createElement("ul");
 
     addClass(wrapper, "popup-list__wrapper");
     addClass(popupList, "popup-list");
@@ -17,9 +15,6 @@ class DynamicList {
       popupList.appendChild(elem);
     });
 
-    this.popupElement = document.createElement("div");
-    addClass(this.popupElement, "popup-list__popup-item"); // TODO: do we need this
-    wrapper.appendChild(this.popupElement);
     wrapper.appendChild(popupList);
 
     container.appendChild(wrapper);
@@ -44,22 +39,26 @@ class DynamicList {
     }
   }
 
-  _mouseleaveHandler() {
-    this.style.transform = "translateX(0px)";
-    const wrapper = this.parentElement.parentElement;
+  _mouseleaveHandler(e) {
+    if (!this.activeElement) {
+      const target = e.target;
+      const wrapper = target.parentElement.parentElement;
 
-    wrapper.style.width = "100%";
-    if (this.previousElementSibling) {
-      this.previousElementSibling.style.transform = "translateX(0px)";
-    }
+      wrapper.style.width = "100%";
 
-    if (this.nextElementSibling) {
-      this.nextElementSibling.style.transform = "translateX(0px)";
+      target.style.transform = "translateX(0px)";
+      if (target.previousElementSibling) {
+        target.previousElementSibling.style.transform = "translateX(0px)";
+      }
+
+      if (target.nextElementSibling) {
+        target.nextElementSibling.style.transform = "translateX(0px)";
+      }
     }
   }
 
   _createListItem(itemOpt) {
-    const item = document.createElement("li");
+    const item = createElement("li");
     addClass(item, "popup-list__item");
 
     item.innerHTML = `${itemOpt?.label || "no content"}`;
@@ -68,15 +67,17 @@ class DynamicList {
      * attach necessary event handlers
      */
     item.addEventListener("mouseenter", this._mouseenterHandler);
-    item.addEventListener("mouseleave", this._mouseleaveHandler);
-    item.addEventListener("click", (e) => {
-      this.popupElement.innerHTML = e.target.innerHTML;
-      removeClass(this.popupElement, ["display-none"]);
-      addClass(this.popupElement, ["display-show", "popup-item__modal"]);
+    item.addEventListener("mouseleave", (e) => this._mouseleaveHandler(e));
+    item.addEventListener("click", () => {
+      item.removeEventListener("mouseenter", this._mouseenterHandler);
+      addClass(item, "popup-list__item-modal");
+      removeClass(item, "popup-list__item");
 
-      e.target.removeEventListener("mouseenter", this._mouseenterHandler);
+      item.style.top = "50%";
+      item.style.left = "50%";
+      item.style.transform = "translate(-50%, -50%)";
 
-      this.activeElement = e.target;
+      this.activeElement = item;
       let backdrop = document.querySelector(".popup-list__backdrop");
       if (!backdrop) {
         backdrop = this._createBackdrop();
@@ -88,15 +89,30 @@ class DynamicList {
   }
 
   _createBackdrop() {
-    const backdrop = document.createElement("div");
+    const backdrop = createElement("div");
     addClass(backdrop, "popup-list__backdrop");
 
     backdrop.addEventListener("click", (e) => {
       document.body.removeChild(backdrop);
       if (this.activeElement) {
-        addClass(this.popupElement, "display-none");
+        this.activeElement.style.transform = "translateX(0px)";
+        if (this.activeElement.previousElementSibling) {
+          this.activeElement.previousElementSibling.style.transform =
+            "translateX(0px)";
+        }
 
-        removeClass(this.popupElement, ["display-show", "popup-item__modal"]);
+        if (this.activeElement.nextElementSibling) {
+          this.activeElement.nextElementSibling.style.transform =
+            "translateX(0px)";
+        }
+
+        addClass(this.activeElement, "popup-list__item");
+        removeClass(this.activeElement, "popup-list__item-modal");
+        this.activeElement.addEventListener(
+          "mouseenter",
+          this._mouseenterHandler
+        );
+        this.activeElement = null;
       }
     });
 
