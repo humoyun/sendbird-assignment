@@ -52,3 +52,5 @@ outside element by setting its positions using getBoundingClientRect() but it ve
 - https://stackoverflow.com/questions/26101314/css-transition-flickering-on-hover
 
 how to allow an element of a scrollable list to shift right side overflow outside the parent div while keeping scrolling of parent on y axis:
+
+## Comparison with recording or screenshots
