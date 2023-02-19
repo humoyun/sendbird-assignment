@@ -31,21 +31,25 @@ class DynamicList {
       /**
        * tbd
        */
-      popupList.addEventListener("wheel", (e) => {
-        const hoverElem =
-          e.target.parentElement.parentElement.querySelector("#hover-item");
-        hoverElem.style.display = "none";
-        hoverElem.previousElementSibling.style.display = "none";
-        hoverElem.nextElementSibling.style.display = "none";
-        e.target.style.transform = "translateX(0px)";
+      popupList.addEventListener(
+        "wheel",
+        (e) => {
+          const hoverElem =
+            e.target.parentElement.parentElement.querySelector("#hover-item");
+          hoverElem.style.display = "none";
+          hoverElem.previousElementSibling.style.display = "none";
+          hoverElem.nextElementSibling.style.display = "none";
+          e.target.style.transform = "translateX(0px)";
 
-        if (e.target.previousElementSibling) {
-          e.target.previousElementSibling.style.transform = "translateX(0px)";
-        }
-        if (e.target.nextElementSibling) {
-          e.target.nextElementSibling.style.transform = "translateX(0px)";
-        }
-      });
+          if (e.target.previousElementSibling) {
+            e.target.previousElementSibling.style.transform = "translateX(0px)";
+          }
+          if (e.target.nextElementSibling) {
+            e.target.nextElementSibling.style.transform = "translateX(0px)";
+          }
+        },
+        { passive: true }
+      );
 
       container.appendChild(popupList);
       this._prepareHoverElements();
@@ -145,6 +149,7 @@ class DynamicList {
     item.addEventListener("mouseenter", this._mouseenterHandler);
     item.addEventListener("mouseleave", this._mouseleaveHandler);
     item.addEventListener("click", (e) => {
+      removeClass(this.popupElement, "display-none");
       addClass(this.popupElement, ["display-show", "popup-item__modal"]);
       this.popupElement.innerHTML = e.target.innerHTML;
 
