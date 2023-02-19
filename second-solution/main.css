@@ -5,7 +5,7 @@ body {
 }
 
 #app {
-  width: 100%;
+  width: 100wh;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -33,13 +33,6 @@ body {
   width: 400px;
   height: 500px;
   padding: 10px;
-}
-
-.popup-list__wrapper {
-  width: 100%;
-  height: 500px;
-  overflow-y: scroll;
-  overflow-x: visible; /* dies not work */
 }
 
 .popup-list {
@@ -70,6 +63,7 @@ body {
   height: 50%;
   z-index: 101;
   background-color: aliceblue;
+  transition: translate 10s ease-in;
 }
 
 .popup-list__backdrop {
@@ -94,6 +88,7 @@ ul {
 .display-show {
   display: flex;
 }
+
 .display-none {
   display: none;
 }

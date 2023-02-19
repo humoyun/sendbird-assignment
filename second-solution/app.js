@@ -1,13 +1,24 @@
 const COLORS = ["#44bb4d", "#F25F5C", "#FFE066", "#247BA0", "#70C1B3"];
 
+const DEFAULT_HEIGHT = "400px";
 class DynamicList {
-  constructor(container, items = []) {
+  constructor(container, items = [], options = {}) {
+    if (!container) throw new Error("please provide valid container element");
+
     this.container = container;
+    this.options = options;
+    this.activeElement = null;
+    this.popupElement = document.createElement("div");
+
+    addClass(this.popupElement, ["display-none"]);
+    container.appendChild(this.popupElement);
 
     const wrapper = createElement("div");
-    const popupList = createElement("ul");
-
+    wrapper.style.height = options.container?.height || DEFAULT_HEIGHT;
+    wrapper.style.overflowY = "scroll";
     addClass(wrapper, "popup-list__wrapper");
+
+    const popupList = createElement("ul");
     addClass(popupList, "popup-list");
 
     items.forEach((item) => {
@@ -20,22 +31,24 @@ class DynamicList {
     container.appendChild(wrapper);
   }
 
-  _mouseenterHandler() {
-    const wrapper = this.parentElement.parentElement;
-    const popupList = this.parentElement;
+  _mouseenterHandler(e) {
+    const target = e.target;
+
+    const wrapper = target.parentElement.parentElement;
+    const popupList = target.parentElement;
 
     const offsets = wrapper.getBoundingClientRect();
     wrapper.style.width = `calc(${offsets.width}px + 40px)`;
     popupList.style.width = `calc(${offsets.width}px`;
 
-    this.style.transform = "translateX(40px)";
+    target.style.transform = "translateX(40px)";
 
-    if (this.previousElementSibling) {
-      this.previousElementSibling.style.transform = "translateX(20px)";
+    if (target.previousElementSibling) {
+      target.previousElementSibling.style.transform = "translateX(20px)";
     }
 
-    if (this.nextElementSibling) {
-      this.nextElementSibling.style.transform = "translateX(20px)";
+    if (target.nextElementSibling) {
+      target.nextElementSibling.style.transform = "translateX(20px)";
     }
   }
 
@@ -43,6 +56,7 @@ class DynamicList {
     if (!this.activeElement) {
       const target = e.target;
       const wrapper = target.parentElement.parentElement;
+      const list = target.parentElement;
 
       wrapper.style.width = "100%";
 
@@ -66,16 +80,16 @@ class DynamicList {
     /**
      * attach necessary event handlers
      */
-    item.addEventListener("mouseenter", this._mouseenterHandler);
+    item.addEventListener("mouseenter", (e) => this._mouseenterHandler(e));
     item.addEventListener("mouseleave", (e) => this._mouseleaveHandler(e));
     item.addEventListener("click", () => {
-      item.removeEventListener("mouseenter", this._mouseenterHandler);
-      addClass(item, "popup-list__item-modal");
-      removeClass(item, "popup-list__item");
+      removeClass(this.popupElement, "display-none");
+      addClass(this.popupElement, ["popup-list__item-modal", "display-show"]);
 
-      item.style.top = "50%";
-      item.style.left = "50%";
-      item.style.transform = "translate(-50%, -50%)";
+      this.popupElement.innerHTML = item.innerHTML;
+      this.popupElement.style.top = "50%";
+      this.popupElement.style.left = "50%";
+      this.popupElement.style.transform = "translate(-50%, -50%)";
 
       this.activeElement = item;
       let backdrop = document.querySelector(".popup-list__backdrop");
@@ -92,7 +106,7 @@ class DynamicList {
     const backdrop = createElement("div");
     addClass(backdrop, "popup-list__backdrop");
 
-    backdrop.addEventListener("click", (e) => {
+    backdrop.addEventListener("click", () => {
       document.body.removeChild(backdrop);
       if (this.activeElement) {
         this.activeElement.style.transform = "translateX(0px)";
@@ -100,18 +114,19 @@ class DynamicList {
           this.activeElement.previousElementSibling.style.transform =
             "translateX(0px)";
         }
-
         if (this.activeElement.nextElementSibling) {
           this.activeElement.nextElementSibling.style.transform =
             "translateX(0px)";
         }
+        const wrapper = this.activeElement.parentElement.parentElement;
+        wrapper.style.width = "100%";
 
-        addClass(this.activeElement, "popup-list__item");
-        removeClass(this.activeElement, "popup-list__item-modal");
-        this.activeElement.addEventListener(
-          "mouseenter",
-          this._mouseenterHandler
-        );
+        removeClass(this.popupElement, [
+          "display-show",
+          "popup-list__item-modal",
+        ]);
+        addClass(this.popupElement, "display-none");
+
         this.activeElement = null;
       }
     });
@@ -127,7 +142,10 @@ const init = () => {
     listItems.push({ label: `${i}`, value: i, id: i });
   }
 
-  new DynamicList(container, listItems);
+  new DynamicList(container, listItems, {
+    container: { height: "500px", width: "100%" },
+    item: {}, // TBD
+  });
 };
 
 window.onload = () => {

@@ -2,7 +2,7 @@
 
 ## Problem analysis: the tricky part
 
-When an element of a scrollable (`y-axe`) list shifts right side (40px) horizontally its opposite part goes out of view for same the amount (40px), it is due to clip space which `overflow: scroll | hidden | auto` creates, setting `x-axe` as `visible` does not help because:
+At first, problem seemed to be easy :) but then I saw the tricky part. When an element of a scrollable (`y-axe`) list shifts right side (40px) horizontally its opposite part goes out of view for same the amount (40px), it is due to clip space which `overflow: scroll | hidden | auto` creates, setting `x-axe` as `visible` does not help because:
 
 > If we look at the W3C spec, we find the following explanation:
 > **The computed values of ‘overflow-x’ and ‘overflow-y’ are the same as their specified values, except that some combinations with ‘visible’ are not possible: if one is specified as ‘visible’ and the other is ‘scroll’ or ‘auto’, then ‘visible’ is set to ‘auto’.**
