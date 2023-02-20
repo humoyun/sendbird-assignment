@@ -28,9 +28,6 @@ class DynamicList {
 
       container.appendChild(this.popupElement);
 
-      /**
-       * tbd
-       */
       popupList.addEventListener(
         "wheel",
         (e) => {
@@ -125,7 +122,6 @@ class DynamicList {
 
     hoverElem.style.display = "none";
     this.style.transform = "translateX(0px)";
-    // this.style.visibility = "visible";
 
     if (this.nextElementSibling) {
       hoverElem.nextElementSibling.style.display = "none";

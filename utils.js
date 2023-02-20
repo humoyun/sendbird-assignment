@@ -25,7 +25,7 @@ function setAttribute(el, attr, val) {
 }
 
 function setBoundingBox(sourceEl, targetEl) {
-  if (sourceEl) {
+  if (sourceEl && targetEl) {
     const offsets = sourceEl.getBoundingClientRect();
 
     targetEl.style.top = offsets.top + window.scrollY + "px";

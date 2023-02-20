@@ -2,50 +2,59 @@
 
 ## Problem analysis: the tricky part
 
-At first, problem seemed to be easy :) but then I saw the tricky part. When an element of a scrollable (`y-axe`) list shifts right side (40px) horizontally its opposite part goes out of view for same the amount (40px), it is due to clip space which `overflow: scroll | hidden | auto` creates, setting `x-axe` as `visible` does not help because:
+At first, problem seemed to be easy :) but then I saw the tricky part. When an element of a scrollable (`y-axis`) list shifts right side (40px) horizontally its opposite part goes out of view for same the amount (40px), it is due to clip space which `overflow: scroll | hidden | auto` creates, setting `x-axis` as `visible` does not help because:
 
-> If we look at the W3C spec, we find the following explanation:
+> If we look at the [W3C spec](https://www.w3.org/TR/css-box-3/#overflow-x), we find the following explanation:
 > **The computed values of ‘overflow-x’ and ‘overflow-y’ are the same as their specified values, except that some combinations with ‘visible’ are not possible: if one is specified as ‘visible’ and the other is ‘scroll’ or ‘auto’, then ‘visible’ is set to ‘auto’.**
 
-So element cannot overflow border of clip space which its parent created (list).
-
-## First solution
-
-After several tries to enable overflow First idea
-
-#### Explanation
-
-#### Drawbacks
-
-The most obvious drawback of this solution is that it is a hacky solution. We are
-
-## Second solution
-
-This solution does not use extra calculation like first solution
-
-#### Explanation
-
-#### Drawbacks
-
-basically like below:
+basically setting overflow axes like below:
 
 ```
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: visible;
 ```
 
-but it does not work due to how browser handles overflow with clipping when one of the axis set to any value but visible it automatically sets another axe and actually becomes
+actually becomes:
 
 ```
-overflow-x: auto;
-overflow-y: auto;
+overflow-x: scroll;
+overflow-y: scroll;
 ```
 
-- https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context
-- https://css-tricks.com/popping-hidden-overflow
+So child element cannot overflow border of clip area which its parent created (scrollable list). You can see this issue below:
 
-tried to solve another element outside of list (container) element, and control absolute positioned
-outside element by setting its positions using getBoundingClientRect() but it very jittering effect and was not stable
+![overflow issue](/assets/img/x-axe-overflow-issue.png)
+
+## First solution
+
+After several unsuccessful tries to enable overflow on `x-axis` (the reason mentioned earlier), an idea came to my mind to handle this overflow issue with extra hidden elements outside of scrollable list as they are not bound to the [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context) which the scrollable list's overflow property created. I created three elements (lets refer them as _hover elements_) outside of list and made their `display` attribute as `none`. And when some child element of the scrollable list hovered over, hidden hover elements are made visible and displaced on top of the corresponding child element and its immediate neighbors (right up and down) by calculating the bounding boxes of currently hovered child element and its neighbors, with `getBoundingClientRect` like below:
+
+```
+function setBoundingBox(sourceEl, targetEl) {
+  if (sourceEl && targetEl) {
+    const offsets = sourceEl.getBoundingClientRect();
+
+    targetEl.style.top = offsets.top + window.scrollY + "px";
+    targetEl.style.left = offsets.left + window.scrollX + "px";
+    targetEl.style.width = `${offsets.width}px`;
+    targetEl.style.height = `${offsets.height}px`;
+  }
+}
+```
+
+when hover was out of item's boundaries, made hover elements hidden again. I had add some other subtle tricks also (like removing hover elements while scrolling) in order to support proper scrolling behavior:
+
+![overflow issue](/assets/img/scroll-issue.png)
+
+#### Drawbacks
+
+The most obvious drawback of this solution is that it is a hacky solution. Although it looks as if it is working as expected mostly (but not smooth :(), it is not stable and highly likely to fail with subtle and unexpected bugs in some cases which in turn again forces to add more code to fix them. So I just abandoned this solution. I included this solution in the repo just to indicate the thought process until I found better and easier solution (though not sure whether it is the optimal solution or not). Let me explain the second (proposed) solution and you will decide whether it is acceptable ot not :).
+
+## Second solution (better)
+
+This solution does not use any extra hidden elements and unnecessary calculations like the first solution.
+
+#### Drawbacks
 
 ## Another issue was `CSS-transition flickering on hover`
 
