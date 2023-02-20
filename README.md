@@ -52,7 +52,7 @@ The most obvious drawback of this solution is that it is a hacky solution. Altho
 
 ## Second solution (better)
 
-This solution does not use any extra hidden elements and unnecessary calculations like the first solution.
+This solution does not use any extra hidden elements and unnecessary calculations like the first solution. The only thing which is necessary is an extra wrapper for the scrollable list element. When child element is hovered the wrapper is automatically resized horizontally according to the predefined length so that clipping area of the list is also shifted for the same amount (which is dependant on the shifting length, 40px in our case).
 
 #### Drawbacks
 

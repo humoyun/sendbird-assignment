@@ -1,9 +1,21 @@
 const COLORS = ["#44bb4d", "#F25F5C", "#FFE066", "#247BA0", "#70C1B3"];
 
-const DEFAULT_HEIGHT = "400px";
+const DEFAULT_OPTIONS = {
+  container: { height: 500 },
+  item: { shiftLength: 20 },
+};
 class DynamicList {
-  constructor(container, items = [], options = {}) {
+  constructor(container, items = [], options = DEFAULT_OPTIONS) {
+    // just simple checks for options
     if (!container) throw new Error("please provide valid container element");
+    if (
+      (!!options && (!options.container || !options.item)) ||
+      !options.container.height ||
+      !options.item.shiftLength
+    )
+      throw new Error(
+        "please either provide valid options or just use default options"
+      );
 
     this.container = container;
     this.options = options;
@@ -14,7 +26,7 @@ class DynamicList {
     container.appendChild(this.popupElement);
 
     const wrapper = createElement("div");
-    wrapper.style.height = options.container?.height || DEFAULT_HEIGHT;
+    wrapper.style.height = `${options.container.height}px`;
     wrapper.style.overflowY = "scroll";
     addClass(wrapper, "popup-list__wrapper");
 
@@ -32,23 +44,28 @@ class DynamicList {
   }
 
   _mouseenterHandler(e) {
-    const target = e.target;
+    const { shiftLength } = this.options.item;
 
+    const target = e.target;
     const wrapper = target.parentElement.parentElement;
     const popupList = target.parentElement;
 
     const offsets = wrapper.getBoundingClientRect();
-    wrapper.style.width = `calc(${offsets.width}px + 40px)`;
+    wrapper.style.width = `calc(${offsets.width}px + ${shiftLength}px)`;
     popupList.style.width = `calc(${offsets.width}px`;
 
-    target.style.transform = "translateX(40px)";
+    target.style.transform = `translateX(${shiftLength}px)`;
 
     if (target.previousElementSibling) {
-      target.previousElementSibling.style.transform = "translateX(20px)";
+      target.previousElementSibling.style.transform = `translateX(${
+        shiftLength / 2
+      }px)`;
     }
 
     if (target.nextElementSibling) {
-      target.nextElementSibling.style.transform = "translateX(20px)";
+      target.nextElementSibling.style.transform = `translateX(${
+        shiftLength / 2
+      }px)`;
     }
   }
 
@@ -108,6 +125,7 @@ class DynamicList {
 
     backdrop.addEventListener("click", () => {
       document.body.removeChild(backdrop);
+
       if (this.activeElement) {
         this.activeElement.style.transform = "translateX(0px)";
         if (this.activeElement.previousElementSibling) {
@@ -143,8 +161,8 @@ const init = () => {
   }
 
   new DynamicList(container, listItems, {
-    container: { height: "500px", width: "100%" },
-    item: {}, // TBD
+    container: { height: 500 },
+    item: { shiftLength: 40 }, // TBD
   });
 };
 
