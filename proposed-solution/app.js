@@ -162,7 +162,7 @@ const init = () => {
 
   new DynamicList(container, listItems, {
     container: { height: 500 },
-    item: { shiftLength: 40 }, // TBD
+    item: { shiftLength: 40 },
   });
 };
 
