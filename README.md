@@ -27,7 +27,7 @@ So child element cannot overflow border of clip area which its parent created (s
 
 ## First solution
 
-After several unsuccessful tries to enable overflow on `x-axis` (the reason mentioned earlier), an idea came to my mind to handle this overflow issue with extra hidden elements outside of scrollable list as they are not bound to the [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context) which the scrollable list's overflow property created. I created three elements (lets refer them as _hover elements_) outside of list and made their `display` attribute as `none`. And when some child element of the scrollable list hovered over, hidden hover elements are made visible and displaced on top of the corresponding child element and its immediate neighbors (right up and down) by calculating the bounding boxes of currently hovered child element and its neighbors, with `getBoundingClientRect` like below:
+After several unsuccessful tries to enable overflow on `x-axis` (the reason mentioned earlier), an idea came to my mind to handle this overflow issue with extra hidden elements outside of scrollable list as they are not bound to the **clip area** which the scrollable list's overflow property created. I created three elements (lets refer them as _hover elements_) outside of list and made their `display` attribute as `none`. And when some child element of the scrollable list hovered over, hidden hover elements are made visible and displaced on top of the corresponding child element and its immediate neighbors (right up and down) by calculating the bounding boxes of currently hovered child element and its neighbors, with `getBoundingClientRect` like below:
 
 ```
 function setBoundingBox(sourceEl, targetEl) {
@@ -42,7 +42,7 @@ function setBoundingBox(sourceEl, targetEl) {
 }
 ```
 
-when hover was out of item's boundaries, made hover elements hidden again. I had add some other subtle tricks also (like removing hover elements while scrolling) in order to support proper scrolling behavior:
+when hover was out of item's boundaries, made hover elements hidden again. I had to add some other subtle tricks also (like removing hover elements while scrolling) in order to support proper scrolling behavior:
 
 ![overflow issue](/assets/img/scroll-issue.png)
 

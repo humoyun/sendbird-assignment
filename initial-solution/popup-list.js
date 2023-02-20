@@ -176,9 +176,4 @@ class DynamicList {
 
     return backdrop;
   }
-
-  open() {}
-  close() {}
-  cleanUp() {}
-  dispatchEvent() {}
 }
