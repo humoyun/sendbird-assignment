@@ -27,7 +27,7 @@ So child element cannot overflow border of clipped area which its parent created
 | ------------------------------------------------------- | ----------------------------------------------- |
 | ![overflow issue](/assets/img/x-axe-overflow-issue.png) | ![overflow issue](/assets/img/scroll-issue.png) |
 
-## First solution
+## Initial solution
 
 After several unsuccessful tries to enable overflow on `x-axis` (the reason mentioned earlier), an idea came to my mind to handle this overflow issue with extra hidden elements outside of scrollable list as they are not bound to the **clip area** which the scrollable list's overflow property created. I created three elements (lets refer them as _hover elements_) outside of list and made their `display` attribute as `none`. And when some child element of the scrollable list hovered over, hidden hover elements are made visible and displaced on top of the corresponding child element and its immediate neighbors (right up and down) by calculating the bounding boxes of currently hovered child element and its neighbors, with `getBoundingClientRect` like below:
 
@@ -50,18 +50,12 @@ when hover was out of item's boundaries, made hover elements hidden again. I had
 
 The most obvious drawback of this solution is that it is a hacky solution. Although it looks as if it is working as expected mostly (but not smooth :(), it is not stable and highly likely to fail with subtle and unexpected bugs in some cases which in turn again forces to add more code to fix them. So I just abandoned this solution. I included this solution in the repo just to indicate the thought process until I found better and easier solution (though not sure whether it is the optimal solution or not). Let me explain the second (proposed) solution and you will decide whether it is acceptable ot not :).
 
-## Second solution (better)
+## Proposed solution (better)
 
-This solution does not use any extra hidden elements and unnecessary calculations like the first solution. The only thing which is necessary is adding extra wrapper element as a parent for the scrollable list element and let handle scrolling the wrapper itself (`wrapper.style.overflowY = "scroll"`). When child element is hovered the wrapper is automatically resized horizontally according to the predefined length so that clipping area of the wrapper does not affect child of a list when it is also shifted for the same amount (40px in our case). Besides, we also need to keep the width of the list element in tact by setting its width same as its child when resizing the wrapper so that it will not stretch to the width of its wrapper.
+This solution does not use any extra hidden elements and unnecessary calculations like the first solution. The only thing which is necessary is adding extra wrapper element as a parent for the scrollable list element and let handle scrolling the wrapper itself (`wrapper.style.overflowY = "scroll"`). When child element is hovered, the wrapper is automatically resized horizontally according to the predefined length so that clipping area of the wrapper does not affect child of a list when it is also shifted for the same amount (40px in our case). Besides, we also need to keep the width of the list element in tact by setting its width same as its child when resizing the wrapper so that it will not stretch to the width of its wrapper.
 
 #### Drawbacks
 
-Ideally, it would be good
+Ideally, it would be really good if had a native mechanism to support this use case but as long as I know there is no such support. And I think this justifies some level extra work in order to achieve the effect like introducing wrapper element to handle scrolling. But I do think there might even better way to achieve this UI. Just let me know if it exists :).
 
-## Another issue was `CSS-transition flickering on hover`
-
-- https://stackoverflow.com/questions/26101314/css-transition-flickering-on-hover
-
-how to allow an element of a scrollable list to shift right side overflow outside the parent div while keeping scrolling of parent on y axis:
-
-## Comparison with recording or screenshots
+> Note: It would be better to include some tests (at least unit tests) to verify the correctness of the implementation, however, I was constrained by time and did only manual testing (which is prone to miss subtle some bugs), sorry!
