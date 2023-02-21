@@ -35,10 +35,10 @@ function setBoundingBox(sourceEl, targetEl) {
   }
 }
 
-function animate(elem, source, destination, duration) {
+// easing for move
+function move(elem, source, destination, duration) {
   let pos = 0;
   clearInterval(elem.animId);
-  // elem.style.marginLeft = source + 'px';
   elem.animId = setInterval(frame, duration / 100);
   const step = (destination - source) / 100;
   function frame() {
@@ -46,7 +46,7 @@ function animate(elem, source, destination, duration) {
       clearInterval(elem.animId);
     } else {
       pos++;
-      elem.style.marginLeft = source + pos * step + "px";
+      elem.style.transform = `translateX(${source + pos * step}px)`;
     }
   }
 }

@@ -39,7 +39,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  background: transparent;
 }
 
 .popup-list__item {
@@ -48,19 +47,21 @@ body {
   border: 1px solid #8e8e8e;
   background-color: #f8f9fa;
   border-radius: 2px;
+  /* TODO handle this with JS */
   transition: transform 100ms ease;
 }
 
 .popup-list__item-modal {
   position: absolute;
+  width: 50%;
+  height: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50%;
-  height: 50%;
+  border: 1px solid #8e8e8e;
+  border-radius: 5px;
+  background-color: #f8f9fa;
   z-index: 101;
-  background-color: aliceblue;
-  transition: translate 10s ease-in;
 }
 
 .popup-list__backdrop {
