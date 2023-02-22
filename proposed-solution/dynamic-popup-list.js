@@ -3,7 +3,7 @@ const DEFAULT_OPTIONS = {
   item: { shiftLength: 20 },
 };
 
-const TIMING_OPTIONS = {
+const TRANSITION_OPTIONS = {
   duration: 100,
   iterations: 1,
   easing: "linear",
@@ -17,12 +17,18 @@ const movingRight = (startPos = 0, endPos = 40) => [
   },
 ];
 
-const movingLeft = (startPos = 40, endPos = 0) => [
+const getKeyFrames = (direction = [0, 0]) => [
   {
-    transform: `translateX(${startPos}px)`,
-    transform: `translateX(${endPos}px)`,
+    transform: `translateX(${direction[0]}px)`,
+    transform: `translateX(${direction[1]}px)`,
   },
 ];
+
+const animate = (elem, direction) => {
+  if (elem) {
+    elem.animate(getKeyFrames(direction), TRANSITION_OPTIONS);
+  }
+};
 
 /**
  * DynamicPopupList: scrollable list in which items of is clickable and
@@ -90,20 +96,15 @@ class DynamicPopupList {
     // as its child so that it will not stretch to the width of the wrapper
     popupList.style.width = `calc(${offsets.width}px`;
 
-    target.animate(movingRight(0, shiftLength), TIMING_OPTIONS);
+    animate(target, [0, shiftLength]);
+    const { previousElementSibling, nextElementSibling } = target;
     // immediate up neighbor of hovered (active) child item
-    if (target.previousElementSibling) {
-      target.previousElementSibling.animate(
-        movingRight(0, shiftLength / 2),
-        TIMING_OPTIONS
-      );
+    if (previousElementSibling) {
+      animate(previousElementSibling, [0, shiftLength / 2]);
     }
     // immediate bottom neighbor of hovered (active) child item
-    if (target.nextElementSibling) {
-      target.nextElementSibling.animate(
-        movingRight(0, shiftLength / 2),
-        TIMING_OPTIONS
-      );
+    if (nextElementSibling) {
+      animate(nextElementSibling, [0, shiftLength / 2]);
     }
   }
 
@@ -119,18 +120,13 @@ class DynamicPopupList {
       wrapper.style.width = "100%";
       popupList.style.width = "100%";
 
-      target.animate(movingLeft(shiftLength, 0), TIMING_OPTIONS);
-      if (target.previousElementSibling) {
-        target.previousElementSibling.animate(
-          movingLeft(shiftLength / 2, 0),
-          TIMING_OPTIONS
-        );
+      animate(target, [shiftLength, 0]);
+      const { previousElementSibling, nextElementSibling } = target;
+      if (previousElementSibling) {
+        animate(previousElementSibling, [shiftLength / 2, 0]);
       }
-      if (target.nextElementSibling) {
-        target.nextElementSibling.animate(
-          movingLeft(shiftLength / 2, 0),
-          TIMING_OPTIONS
-        );
+      if (nextElementSibling) {
+        animate(nextElementSibling, [shiftLength / 2, 0]);
       }
     }
   }
@@ -175,15 +171,11 @@ class DynamicPopupList {
       if (this.activeElement) {
         // move back shifted child elements to its initial position
         const { shiftLength } = this.options.item;
-        this.activeElement.animate(movingLeft(shiftLength, 0), TIMING_OPTIONS);
-        this.activeElement.previousElementSibling.animate(
-          movingLeft(shiftLength / 2, 0),
-          TIMING_OPTIONS
-        );
-        this.activeElement.nextElementSibling.animate(
-          movingLeft(shiftLength / 2, 0),
-          TIMING_OPTIONS
-        );
+        animate(this.activeElement, [shiftLength, 0]);
+        const { previousElementSibling, nextElementSibling } =
+          this.activeElement;
+        animate(previousElementSibling, [shiftLength / 2, 0]);
+        animate(nextElementSibling, [shiftLength / 2, 0]);
 
         // this causes list and its children to recalculate their width again
         // otherwise after clicking backdrop, list remains in the resized size:
