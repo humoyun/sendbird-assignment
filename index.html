@@ -15,8 +15,9 @@
 
     <script type="text/javascript">
       // injection of base tag based on hostname
-      if (document.location.hostname === "localhost") {
-        document.write("<base href='http://" + document.location.host + "' />");
+      const {hostname} = document.location
+      if ([ "localhost", "127.0.0.1"].includes(hostname)) {
+        document.write(`<base href='${document.location.origin}/' />`);
       } else {
         document.write(
           `<base href='${document.location.origin}/sendbird-assignment/' />`
