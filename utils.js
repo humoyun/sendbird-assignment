@@ -35,22 +35,6 @@ function setBoundingBox(sourceEl, targetEl) {
   }
 }
 
-// easing for move
-function move(elem, source, destination, duration) {
-  let pos = 0;
-  clearInterval(elem.animId);
-  elem.animId = setInterval(frame, duration / 100);
-  const step = (destination - source) / 100;
-  function frame() {
-    if (pos >= 100) {
-      clearInterval(elem.animId);
-    } else {
-      pos++;
-      elem.style.transform = `translateX(${source + pos * step}px)`;
-    }
-  }
-}
-
 function createElement(tag) {
   if (tag) {
     return document.createElement(tag);
